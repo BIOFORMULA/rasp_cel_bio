@@ -56,17 +56,29 @@
         // Configuração inicial
         const canvas = document.getElementById('raspadinha');
         const ctx = canvas.getContext('2d');
-
-        // Ajustar o tamanho do canvas para coincidir com o container fixo (400x200)
         const container = document.getElementById('raspadinha-container');
-        canvas.width = container.offsetWidth;
-        canvas.height = container.offsetHeight;
+
+        // Ajustar resolução do canvas para alta qualidade
+        const devicePixelRatio = window.devicePixelRatio || 1; // Captura a densidade de pixels do dispositivo
+        const width = container.offsetWidth;
+        const height = container.offsetHeight;
+
+        // Configurando o tamanho real do canvas
+        canvas.width = width * devicePixelRatio; // Tamanho interno do canvas em pixels
+        canvas.height = height * devicePixelRatio;
+
+        // Configurando o tamanho visível (CSS) do canvas
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+
+        // Ajustar o contexto para alta densidade de pixels
+        ctx.scale(devicePixelRatio, devicePixelRatio);
 
         // Desenhar a camada superior (capa da raspadinha)
         const capa = new Image();
         capa.src = 'atualizadocapa.png'; // Imagem de cobertura
         capa.onload = () => {
-            ctx.drawImage(capa, 0, 0, canvas.width, canvas.height);
+            ctx.drawImage(capa, 0, 0, width, height); // Ajusta para o tamanho do contêiner
         };
 
         // Funções para raspagem
@@ -83,16 +95,16 @@
         canvas.addEventListener('mousedown', (e) => {
             isDrawing = true;
             const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            const x = (e.clientX - rect.left) * devicePixelRatio;
+            const y = (e.clientY - rect.top) * devicePixelRatio;
             clearArea(x, y);
         });
 
         canvas.addEventListener('mousemove', (e) => {
             if (isDrawing) {
                 const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+                const x = (e.clientX - rect.left) * devicePixelRatio;
+                const y = (e.clientY - rect.top) * devicePixelRatio;
                 clearArea(x, y);
             }
         });
@@ -110,8 +122,8 @@
             e.preventDefault(); // Impede a rolagem padrão
             isDrawing = true;
             const rect = canvas.getBoundingClientRect();
-            const x = e.touches[0].clientX - rect.left;
-            const y = e.touches[0].clientY - rect.top;
+            const x = (e.touches[0].clientX - rect.left) * devicePixelRatio;
+            const y = (e.touches[0].clientY - rect.top) * devicePixelRatio;
             clearArea(x, y);
         });
 
@@ -119,8 +131,8 @@
             e.preventDefault(); // Impede a rolagem padrão
             if (isDrawing) {
                 const rect = canvas.getBoundingClientRect();
-                const x = e.touches[0].clientX - rect.left;
-                const y = e.touches[0].clientY - rect.top;
+                const x = (e.touches[0].clientX - rect.left) * devicePixelRatio;
+                const y = (e.touches[0].clientY - rect.top) * devicePixelRatio;
                 clearArea(x, y);
             }
         });
